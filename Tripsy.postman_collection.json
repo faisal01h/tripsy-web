@@ -1,0 +1,351 @@
+{
+  "info": {
+    "name": "Tripsy API",
+    "_postman_id": "d0e4560e-4f39-4a87-8ce3-4f0522f40c82",
+    "description": "JWT-based API collection for Tripsy web feature parity.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"API User\",\n  \"email\": \"api-user@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/auth/register"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"api-user@example.com\",\n  \"password\": \"password\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/auth/login"
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/auth/me"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+        ],
+        "url": "{{base_url}}/api/v1/dashboard"
+      }
+    },
+    {
+      "name": "Trips",
+      "item": [
+        {
+          "name": "List Trips",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/trips"
+          }
+        },
+        {
+          "name": "Create Trip",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bali Surf Camp\",\n  \"destination\": \"Bali\",\n  \"members_can_edit_entries\": true,\n  \"default_currency\": \"IDR\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/trips"
+          }
+        },
+        {
+          "name": "Show Trip",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/trips/{{trip_id}}"
+          }
+        },
+        {
+          "name": "Update Trip",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Trip Name\",\n  \"default_currency\": \"USD\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/trips/{{trip_id}}"
+          }
+        },
+        {
+          "name": "Delete Trip",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/trips/{{trip_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trip Members",
+      "item": [
+        {
+          "name": "Add Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 2\n}"
+            },
+            "url": "{{base_url}}/api/v1/trips/{{trip_id}}/members"
+          }
+        },
+        {
+          "name": "Remove Member",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/trips/{{trip_id}}/members/{{user_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trip Itineraries",
+      "item": [
+        {
+          "name": "Create Itinerary",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Cafe stop\",\n  \"scheduled_for\": \"2026-04-10 12:00:00\",\n  \"notes\": \"Near the beach\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/trips/{{trip_id}}/itineraries"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trip Expenses",
+      "item": [
+        {
+          "name": "Create Expense",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Taxi\",\n  \"amount\": 32.5,\n  \"currency\": \"USD\",\n  \"paid_by_user_id\": 1,\n  \"split_user_ids\": [1,2],\n  \"incurred_on\": \"2026-04-10\",\n  \"notes\": \"Airport transfer\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/trips/{{trip_id}}/expenses"
+          }
+        },
+        {
+          "name": "Update Expense",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Taxi Updated\",\n  \"amount\": 35,\n  \"currency\": \"USD\",\n  \"paid_by_user_id\": 1,\n  \"split_user_ids\": [1,2]\n}"
+            },
+            "url": "{{base_url}}/api/v1/trips/{{trip_id}}/expenses/{{trip_expense_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Friendships",
+      "item": [
+        {
+          "name": "List Friends",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/friends"
+          }
+        },
+        {
+          "name": "Send Friend Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"friend_email\": \"friend@example.com\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/friendships"
+          }
+        },
+        {
+          "name": "Accept Friend Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/friendships/{{friendship_id}}/accept"
+          }
+        },
+        {
+          "name": "Reject Friend Request",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/friendships/{{friendship_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "Profile: Show",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/settings/profile"
+          }
+        },
+        {
+          "name": "Profile: Update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@example.com\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/settings/profile"
+          }
+        },
+        {
+          "name": "Profile: Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"password\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/settings/profile"
+          }
+        },
+        {
+          "name": "Security: Show",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{base_url}}/api/v1/settings/security"
+          }
+        },
+        {
+          "name": "Security: Update Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"password\",\n  \"password\": \"new-password\",\n  \"password_confirmation\": \"new-password\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/settings/password"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "jwt_token", "value": "" },
+    { "key": "trip_id", "value": "1" },
+    { "key": "trip_expense_id", "value": "1" },
+    { "key": "friendship_id", "value": "1" },
+    { "key": "user_id", "value": "2" }
+  ]
+}
