@@ -1,19 +1,44 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowRight, BadgeCheck, Coins, Route, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { dashboard, login, register } from '@/routes';
 import trips from '@/routes/trips';
+
+const tripSnapshot = [
+    {
+        destination: 'Bali Weekend Escape',
+        members: '5',
+        total: '$1,280',
+        estimate: '$256',
+        liveNote: 'Auto-balancing meals, villas, and airport rides.',
+    },
+    {
+        destination: 'Bangkok Exploration',
+        members: '4',
+        total: '$3,211',
+        estimate: '$803',
+        liveNote: 'Splitting tuk-tuks, street food, and transportation costs.',
+    },
+];
 
 export default function Welcome({
     canRegister = true,
 }: {
     canRegister?: boolean;
 }) {
-    const { auth } = usePage().props;
+    const { auth, name } = usePage().props;
     const isAuthenticated = !!auth.user;
+    const currentYear = new Date().getFullYear();
+    const activeSnapshot = useRotatingSnapshot(tripSnapshot, 7000);
+    const destination = useTypedText(activeSnapshot.destination, { startDelay: 150, stepMs: 55 });
+    const members = useTypedText(activeSnapshot.members, { startDelay: 1300, stepMs: 160 });
+    const total = useTypedText(activeSnapshot.total, { startDelay: 1550, stepMs: 85 });
+    const estimate = useTypedText(activeSnapshot.estimate, { startDelay: 1850, stepMs: 90 });
+    const liveNote = useTypedText(activeSnapshot.liveNote, { startDelay: 2200, stepMs: 28 });
 
     return (
         <>
-            <Head title="Tripsy">
+            <Head title={name}>
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link
                     href="https://fonts.bunny.net/css?family=space-grotesk:400,500,600,700"
@@ -22,12 +47,12 @@ export default function Welcome({
             </Head>
 
             <div className="min-h-screen bg-neutral-50 text-neutral-900">
-                <div className="mx-auto max-w-6xl px-6 py-8 sm:px-8 lg:px-10">
+                <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-8 sm:px-8 lg:px-10">
                     <header className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <div className="h-8 w-8 rounded-md bg-cyan-600" />
                             <p className="font-['Space_Grotesk'] text-lg font-semibold tracking-tight">
-                                Tripsy
+                                {name}
                             </p>
                         </div>
 
@@ -69,7 +94,7 @@ export default function Welcome({
                         </nav>
                     </header>
 
-                    <main className="pt-14 sm:pt-20">
+                    <main className="flex-1 pt-14 sm:pt-20">
                         <section className="grid gap-8 rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm sm:p-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
                             <div>
                                 <p className="inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-cyan-700">
@@ -109,21 +134,47 @@ export default function Welcome({
                                 <div className="mt-4 space-y-3">
                                     <div className="rounded-xl border border-neutral-200 bg-white p-4">
                                         <p className="text-sm font-medium text-neutral-500">Destination</p>
-                                        <p className="mt-1 font-semibold">Bali Weekend Escape</p>
+                                        <TypingText
+                                            text={destination.displayedText}
+                                            isComplete={destination.isComplete}
+                                            className="mt-1 font-semibold"
+                                        />
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="rounded-xl border border-neutral-200 bg-white p-4">
                                             <p className="text-sm font-medium text-neutral-500">Members</p>
-                                            <p className="mt-1 text-xl font-bold">5</p>
+                                            <TypingText
+                                                text={members.displayedText}
+                                                isComplete={members.isComplete}
+                                                className="mt-1 text-xl font-bold"
+                                            />
                                         </div>
                                         <div className="rounded-xl border border-neutral-200 bg-white p-4">
                                             <p className="text-sm font-medium text-neutral-500">Total</p>
-                                            <p className="mt-1 text-xl font-bold">$1,280</p>
+                                            <TypingText
+                                                text={total.displayedText}
+                                                isComplete={total.isComplete}
+                                                className="mt-1 text-xl font-bold"
+                                            />
                                         </div>
                                     </div>
                                     <div className="rounded-xl border border-cyan-200 bg-cyan-50 p-4 text-cyan-900">
                                         <p className="text-sm font-medium">Per person estimate</p>
-                                        <p className="mt-1 text-xl font-bold">$256</p>
+                                        <TypingText
+                                            text={estimate.displayedText}
+                                            isComplete={estimate.isComplete}
+                                            className="mt-1 text-xl font-bold"
+                                        />
+                                    </div>
+                                    <div className="rounded-xl border border-dashed border-neutral-300 bg-white/80 p-4">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-neutral-500">
+                                            Live note
+                                        </p>
+                                        <TypingText
+                                            text={liveNote.displayedText}
+                                            isComplete={liveNote.isComplete}
+                                            className="mt-2 text-sm leading-relaxed text-neutral-700"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -152,10 +203,154 @@ export default function Welcome({
                             />
                         </section>
                     </main>
+
+                    <footer className="mt-16 border-t border-neutral-200 py-8">
+                        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <p className="font-['Space_Grotesk'] text-xl font-semibold tracking-tight text-neutral-900">
+                                    {name}
+                                </p>
+                                <p className="mt-2 max-w-md text-sm leading-relaxed text-neutral-600">
+                                    Build a shared itinerary, capture every group expense, and keep settlement clear
+                                    before the trip gets messy.
+                                </p>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-neutral-600">
+                                <Link
+                                    href={isAuthenticated ? dashboard() : login()}
+                                    className="rounded-md px-3 py-2 transition hover:bg-white hover:text-neutral-900"
+                                >
+                                    {isAuthenticated ? 'Dashboard' : 'Log in'}
+                                </Link>
+                                <Link
+                                    href={isAuthenticated ? trips.index() : register()}
+                                    className="rounded-md px-3 py-2 transition hover:bg-white hover:text-neutral-900"
+                                >
+                                    {isAuthenticated ? 'Trips' : 'Create account'}
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 flex flex-col gap-2 border-t border-neutral-200 pt-6 text-xs text-neutral-500 sm:flex-row sm:items-center sm:justify-between">
+                            <p>{currentYear} {name}. Built for group travel without spreadsheet debt.</p>
+                            <p>Friends, plans, balances, and multi-currency costs in one place.</p>
+                        </div>
+                    </footer>
                 </div>
             </div>
         </>
     );
+}
+
+function TypingText({
+    text,
+    isComplete,
+    className,
+}: {
+    text: string;
+    isComplete: boolean;
+    className?: string;
+}) {
+    return (
+        <p className={className}>
+            {text || '\u00A0'}
+            {!isComplete && <span className="ml-0.5 inline-block w-2 animate-pulse">|</span>}
+        </p>
+    );
+}
+
+function useTypedText(
+    text: string,
+    { startDelay = 0, stepMs = 80 }: { startDelay?: number; stepMs?: number } = {},
+) {
+    const prefersReducedMotion = usePrefersReducedMotion();
+    const [displayedText, setDisplayedText] = useState(() => (prefersReducedMotion ? text : ''));
+    const [isComplete, setIsComplete] = useState(prefersReducedMotion);
+
+    useEffect(() => {
+        if (prefersReducedMotion) {
+            return;
+        }
+
+        let currentIndex = 0;
+        let typingTimer: number | undefined;
+        const resetFrame = window.requestAnimationFrame(() => {
+            setDisplayedText('');
+            setIsComplete(false);
+        });
+
+        const startTimer = window.setTimeout(() => {
+            typingTimer = window.setInterval(() => {
+                currentIndex += 1;
+
+                setDisplayedText(text.slice(0, currentIndex));
+
+                if (currentIndex >= text.length) {
+                    window.clearInterval(typingTimer);
+                    setIsComplete(true);
+                }
+            }, stepMs);
+        }, startDelay);
+
+        return () => {
+            window.cancelAnimationFrame(resetFrame);
+            window.clearTimeout(startTimer);
+
+            if (typingTimer !== undefined) {
+                window.clearInterval(typingTimer);
+            }
+        };
+    }, [prefersReducedMotion, startDelay, stepMs, text]);
+
+    return { displayedText, isComplete };
+}
+
+function useRotatingSnapshot<T>(items: T[], cycleMs: number): T {
+    const prefersReducedMotion = usePrefersReducedMotion();
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    useEffect(() => {
+        if (items.length <= 1 || prefersReducedMotion) {
+            return;
+        }
+
+        const interval = window.setInterval(() => {
+            setActiveIndex((currentIndex) => (currentIndex + 1) % items.length);
+        }, cycleMs);
+
+        return () => {
+            window.clearInterval(interval);
+        };
+    }, [cycleMs, items.length, prefersReducedMotion]);
+
+    return items[activeIndex] ?? items[0];
+}
+
+function usePrefersReducedMotion() {
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
+        if (typeof window === 'undefined') {
+            return false;
+        }
+
+        return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    });
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        const handleChange = (event: MediaQueryListEvent) => {
+            setPrefersReducedMotion(event.matches);
+        };
+
+        mediaQuery.addEventListener('change', handleChange);
+
+        return () => {
+            mediaQuery.removeEventListener('change', handleChange);
+        };
+    }, []);
+
+    return prefersReducedMotion;
 }
 
 function FeatureCard({

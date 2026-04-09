@@ -36,4 +36,20 @@ class RegistrationTest extends TestCase
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
     }
+
+    public function test_new_users_cannot_register_with_a_password_shorter_than_eight_characters(): void
+    {
+        $response = $this->from(route('register'))->post(route('register.store'), [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => '1234567',
+            'password_confirmation' => '1234567',
+        ]);
+
+        $response
+            ->assertSessionHasErrors('password')
+            ->assertRedirect(route('register'));
+
+        $this->assertGuest();
+    }
 }

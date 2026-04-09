@@ -41,6 +41,15 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'maps' => [
+                'provider' => config('maps.provider'),
+                'google' => [
+                    'apiKey' => blank(config('maps.google.api_key')) ? null : config('maps.google.api_key'),
+                ],
+                'mapbox' => [
+                    'publicToken' => blank(config('maps.mapbox.public_token')) ? null : config('maps.mapbox.public_token'),
+                ],
+            ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

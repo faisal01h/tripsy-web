@@ -165,6 +165,8 @@ class TripManagementTest extends TestCase
      */
     public function test_trip_totals_are_converted_into_trip_default_currency()
     {
+        config()->set('maps.provider', 'openstreetmap');
+
         Http::fake([
             'https://open.er-api.com/v6/latest/EUR' => Http::response([
                 'rates' => [
@@ -196,10 +198,35 @@ class TripManagementTest extends TestCase
         $this->actingAs($host)
             ->get(route('trips.show', $trip))
             ->assertInertia(fn (Assert $page) => $page
+                ->where('maps.provider', 'openstreetmap')
                 ->where('selectedTrip.default_currency', 'USD')
                 ->where('selectedTrip.stats.total_expenses', 60)
                 ->where('selectedTrip.expenses.0.currency', 'EUR')
                 ->where('selectedTrip.expenses.0.amount_in_default_currency', 60));
+    }
+
+    /**
+     * @return void
+     */
+    public function test_trips_page_receives_configured_map_provider_settings()
+    {
+        config()->set('maps.provider', 'mapbox');
+        config()->set('maps.mapbox.public_token', 'pk.test-token');
+
+        $host = User::factory()->create();
+        $trip = Trip::factory()->create([
+            'host_user_id' => $host->id,
+        ]);
+        $trip->members()->syncWithoutDetaching([
+            $host->id => ['joined_at' => now()],
+        ]);
+
+        $this->actingAs($host)
+            ->get(route('trips.show', $trip))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('maps.provider', 'mapbox')
+                ->where('maps.mapbox.publicToken', 'pk.test-token')
+                ->where('maps.google.apiKey', null));
     }
 
     /**
